@@ -1,15 +1,16 @@
+import sys
+import os
+if hasattr(sys, 'frozen'):
+    os.environ['PATH'] = sys._MEIPASS + ";" + os.environ['PATH']
+
 from PyQt5 import QtCore, QtWidgets, QtGui
 from Ui_Main import Ui_MainWindow
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+
 import numpy as np
 import xlsxwriter
-
-import sys
-import os
-if hasattr(sys, 'frozen'):
-    os.environ['PATH'] = sys._MEIPASS + ";" + os.environ['PATH']
 
 
 class LoadS2P(Ui_MainWindow, QMainWindow):
@@ -27,14 +28,19 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
         self.OpenButton.clicked.connect(self.open_click)
         self.AddButton.clicked.connect(self.add_click)
         self.DeleteButton.clicked.connect(self.delete_click)
+
         self.MaxIL_Table.clicked.connect(self.maxiltabel_click)
         self.AvgIL_Table.clicked.connect(self.avgtabel_click)
         self.Att_Table.clicked.connect(self.atttabel_click)
         self.RL_Table.clicked.connect(self.rltable_click)
+        self.Ripple_Table.clicked.connect(self.ripple_click)
+
         self.MaxIL_Table.horizontalHeader().sectionClicked.connect(self.maxiltabel_click)
         self.AvgIL_Table.horizontalHeader().sectionClicked.connect(self.avgtabel_click)
         self.Att_Table.horizontalHeader().sectionClicked.connect(self.atttabel_click)
         self.RL_Table.horizontalHeader().sectionClicked.connect(self.rltable_click)
+        self.Ripple_Table.horizontalHeader().sectionClicked.connect(self.ripple_click)
+
         self.CalculateButton.clicked.connect(self.calculate_click)
         self.ApplyButton.clicked.connect(self.apply_click)
         self.HelpButton.clicked.connect(self.help_click)
@@ -152,7 +158,7 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
         if fileName == "":
             return
         else:
-            return      
+            return
 
     def open_click(self):
         fileName, fileType = QFileDialog.getOpenFileName(self, "Open File", os.getcwd(),
@@ -160,7 +166,7 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
         if fileName == "":
             return
         else:
-            return        
+            return
 
     def export_click(self):
         fileName, fileType = QFileDialog.getSaveFileName(self, "Export Excel", os.getcwd(),
@@ -294,6 +300,8 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
             self.insertTableRow(self.AvgIL_Table)
         if self.tabelNum == 3:
             self.insertTableRow(self.Att_Table)
+        if self.tabelNum == 4:
+            self.insertTableRow(self.Ripple_Table)
 
     def delete_click(self):
         if self.tabelNum == 1:
@@ -302,6 +310,8 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
             self.deleteTableRow(self.AvgIL_Table)
         if self.tabelNum == 3:
             self.deleteTableRow(self.Att_Table)
+        if self.tabelNum == 4:
+            self.deleteTableRow(self.Ripple_Table)       
 
     def maxiltabel_click(self):
         self.tabelNum = 1
@@ -314,6 +324,9 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
 
     def rltable_click(self):
         self.tabelNum = 0
+
+    def ripple_click(self):
+        self.tabelNum = 4
 
     def calculate_click(self):
         return
@@ -343,6 +356,7 @@ if __name__ == "__main__":
     load.MaxIL_Table.setRowCount(0)
     load.MaxIL_Table.setColumnCount(3)
     load.MaxIL_Table.horizontalHeader().setFont(font)
+    load.MaxIL_Table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
     load.MaxIL_Table.setHorizontalHeaderLabels(
         ['Start/MHz', 'Stop/MHz', 'Value/dB'])
     load.insertTableRow(load.MaxIL_Table)
@@ -350,19 +364,30 @@ if __name__ == "__main__":
     load.RL_Table.setRowCount(2)
     load.RL_Table.setColumnCount(3)
     load.RL_Table.horizontalHeader().setFont(font)
+    load.RL_Table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
     load.RL_Table.setHorizontalHeaderLabels(
         ['Start/MHz', 'Stop/MHz', 'Value/dB'])
 
     load.AvgIL_Table.setRowCount(0)
     load.AvgIL_Table.setColumnCount(3)
     load.AvgIL_Table.horizontalHeader().setFont(font)
+    load.AvgIL_Table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
     load.AvgIL_Table.setHorizontalHeaderLabels(
         ['Start/MHz', 'Stop/MHz', 'Value/dB'])
     load.insertTableRow(load.AvgIL_Table)
 
+    load.Ripple_Table.setRowCount(0)
+    load.Ripple_Table.setColumnCount(3)
+    load.Ripple_Table.horizontalHeader().setFont(font)
+    load.Ripple_Table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+    load.Ripple_Table.setHorizontalHeaderLabels(
+        ['Start/MHz', 'Stop/MHz', 'Value/dB'])
+    load.insertTableRow(load.Ripple_Table)
+
     load.Att_Table.setRowCount(0)
     load.Att_Table.setColumnCount(3)
     load.Att_Table.horizontalHeader().setFont(font)
+    load.Att_Table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
     load.Att_Table.setHorizontalHeaderLabels(
         ['Start/MHz', 'Stop/MHz', 'Value/dB'])
     load.insertTableRow(load.Att_Table)
