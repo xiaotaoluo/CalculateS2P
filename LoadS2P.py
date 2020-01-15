@@ -8,7 +8,7 @@ from Ui_Main import Ui_MainWindow
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
-from enum import Enum
+import pyqtgraph as pg
 
 import numpy as np
 import xlsxwriter
@@ -22,6 +22,19 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
         self.tabelNum = 0
         self.DataNull = False
 
+        pg.setConfigOptions(antialias=True)
+        self.plotgraph = pg.PlotWidget(title="S-Parameter")
+        self.Graphics_Layout.addWidget(self.plotgraph)
+
+    def initGraph(self):
+        # pg.setConfigOption('background','w')
+        # pg.setConfigOption('foreground','b')
+        if self.DataNull:
+            self.plotgraph.clear()
+            self.plotgraph.plot(self._freq,self._mag_s11,pen=(242,242,0),name="S11")
+            self.plotgraph.plot(self._freq,self._mag_s22,pen=(236,5,236))           
+            self.plotgraph.plot(self._freq,self._mag_s21,pen=(3,245,245))
+        
     def registerEvent(self):
         self.ImportButton.clicked.connect(self.import_click)
         self.ExportButton.clicked.connect(self.export_click)
@@ -258,6 +271,7 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
             self.addTable_Data(self.AvgIL_Table)
             self.addTable_Data(self.RL_Table)
             self.addTable_Data(self.Ripple_Table)
+            self.initGraph()
 
     def addTable_Data(self, Table):
         attRow = Table.rowCount()

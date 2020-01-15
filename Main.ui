@@ -443,6 +443,11 @@
        <attribute name="title">
         <string>Graphics</string>
        </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_16">
+        <item>
+         <layout class="QVBoxLayout" name="Graphics_Layout"/>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>
