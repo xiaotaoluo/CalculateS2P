@@ -8,6 +8,7 @@ from Ui_Main import Ui_MainWindow
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from enum import Enum
 
 import numpy as np
 import xlsxwriter
@@ -141,6 +142,8 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
                     RLdata2 = np.append(
                         RLdata2, self.search_withpoint(point2 / 1000000)[3])
                     data = [max(RLdata1), max(RLdata2)]
+                if Max_AVG == 'Ripple':
+                    data = min(ILdata) - max(ILdata)
             return data
 
     def import_click(self):
@@ -216,6 +219,18 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
                     'C'+str(rowNumber), self.getTableData(self.AvgIL_Table)[2], format1)
 
                 rowNumber = rowNumber + self.AvgIL_Table.rowCount()
+                book_sheet.write_row('A'+str(rowNumber), ['IL Ripple'], bold)
+                book_sheet.write_row(
+                    'A'+str(rowNumber+1), ['Start/MHz', 'Stop/MHz', 'Value/dB'], bold)
+                rowNumber = rowNumber + 2
+                book_sheet.write_column(
+                    'A'+str(rowNumber), self.getTableData(self.Ripple_Table)[0])
+                book_sheet.write_column(
+                    'B'+str(rowNumber), self.getTableData(self.Ripple_Table)[1])
+                book_sheet.write_column(
+                    'C'+str(rowNumber), self.getTableData(self.Ripple_Table)[2], format1)
+
+                rowNumber = rowNumber + self.Ripple_Table.rowCount()
                 book_sheet.write_row('A'+str(rowNumber), ['Attenuation'], bold)
                 book_sheet.write_row(
                     'A'+str(rowNumber+1), ['Start/MHz', 'Stop/MHz', 'Value/dB'], bold)
@@ -242,6 +257,7 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
             self.addTable_Data(self.MaxIL_Table)
             self.addTable_Data(self.AvgIL_Table)
             self.addTable_Data(self.RL_Table)
+            self.addTable_Data(self.Ripple_Table)
 
     def addTable_Data(self, Table):
         attRow = Table.rowCount()
@@ -279,6 +295,11 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
                 if Table == self.RL_Table:
                     item = QTableWidgetItem(
                         str(self.search_withrange(attData[i][0], attData[i][1], 'RL')[i])[:7])
+                    item.setFlags(Qt.ItemIsEditable)
+                    Table.setItem(i, 2, item)
+                if Table == self.Ripple_Table:
+                    item = QTableWidgetItem(
+                        str(self.search_withrange(attData[i][0], attData[i][1], 'Ripple'))[:7])
                     item.setFlags(Qt.ItemIsEditable)
                     Table.setItem(i, 2, item)
 

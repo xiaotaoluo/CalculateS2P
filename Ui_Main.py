@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'd:\Code_CalculateS2P\Main.ui'
+# Form implementation generated from reading ui file 'd:\GitHub_CalculateS2P\Main.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -94,6 +94,9 @@ class Ui_MainWindow(object):
         self.Ripple_Table.setObjectName("Ripple_Table")
         self.Ripple_Table.setColumnCount(0)
         self.Ripple_Table.setRowCount(0)
+        self.Ripple_Table.horizontalHeader().setDefaultSectionSize(94)
+        self.Ripple_Table.horizontalHeader().setMinimumSectionSize(20)
+        self.Ripple_Table.verticalHeader().setDefaultSectionSize(25)
         self.verticalLayout_13.addWidget(self.Ripple_Table)
         self.verticalLayout.addWidget(self.Ripple_Label)
         self.AvgIL_Label = QtWidgets.QGroupBox(self.Cal_tab)
