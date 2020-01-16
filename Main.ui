@@ -447,6 +447,18 @@
         <item>
          <layout class="QVBoxLayout" name="Graphics_Layout"/>
         </item>
+        <item>
+         <widget class="QGroupBox" name="Limit_Table">
+          <property name="title">
+           <string>LimitLine</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_15">
+           <item>
+            <widget class="QTableWidget" name="tableWidget"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>

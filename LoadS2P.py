@@ -24,16 +24,29 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
 
         pg.setConfigOptions(antialias=True)
         self.plotgraph = pg.PlotWidget(title="S-Parameter")
+        self.legendtext = self.plotgraph.addLegend()
         self.Graphics_Layout.addWidget(self.plotgraph)
+
+        # self.lineR = pg.LinearRegionItem(values=(1,1))
+
 
     def initGraph(self):
         # pg.setConfigOption('background','w')
         # pg.setConfigOption('foreground','b')
         if self.DataNull:
             self.plotgraph.clear()
-            self.plotgraph.plot(self._freq,self._mag_s11,pen=(242,242,0),name="S11")
-            self.plotgraph.plot(self._freq,self._mag_s22,pen=(236,5,236))           
-            self.plotgraph.plot(self._freq,self._mag_s21,pen=(3,245,245))
+            self.legendtext.removeItem('S11')
+            self.legendtext.removeItem('S22')
+            self.legendtext.removeItem('S21')
+            self.plotgraph.showGrid(x=True,y=True)
+            self.plotgraph.setLabel(axis='left',text='S/dB')
+            self.plotgraph.setLabel(axis='bottom',text='Freq/MHz')
+            self.plotgraph.plot(self._freq/1000000.0,self._mag_s11,pen=(242,242,0),name="S11")
+            self.plotgraph.plot(self._freq/1000000.0,self._mag_s22,pen=(236,5,236),name="S22")           
+            self.plotgraph.plot(self._freq/1000000.0,self._mag_s21,pen=(3,245,245),name="S21")
+
+            # self.lineR.setRegion([self._freq[0],self._freq[2]])
+            # self.plotgraph.addItem(self.lineR)
         
     def registerEvent(self):
         self.ImportButton.clicked.connect(self.import_click)
@@ -63,7 +76,7 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
         self.DataNull = True
         self.load_file_name = file_name
         self.file_data = np.loadtxt(
-            file_name, dtype=float, comments=['!', '#'])
+            file_name, dtype=float, comments=['!','#'])
         self._freq = self.file_data[..., 0]
         self._mag_s11 = self.file_data[..., 1]
         self._ang_s11 = self.file_data[..., 2]
