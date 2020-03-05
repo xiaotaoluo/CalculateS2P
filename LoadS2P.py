@@ -1,17 +1,15 @@
+import xlsxwriter
+import numpy as np
+import pyqtgraph as pg
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from Ui_Main import Ui_MainWindow
+from PyQt5 import QtCore, QtWidgets, QtGui
 import sys
 import os
 if hasattr(sys, 'frozen'):
     os.environ['PATH'] = sys._MEIPASS + ";" + os.environ['PATH']
-
-from PyQt5 import QtCore, QtWidgets, QtGui
-from Ui_Main import Ui_MainWindow
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-import pyqtgraph as pg
-
-import numpy as np
-import xlsxwriter
 
 
 class LoadS2P(Ui_MainWindow, QMainWindow):
@@ -27,8 +25,9 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
         self.legendtext = self.plotgraph.addLegend()
         self.Graphics_Layout.addWidget(self.plotgraph)
 
-        # self.lineR = pg.LinearRegionItem(values=(1,1))
+        self.ParameterHeader = ['Xc Optimal','Xc 1']
 
+        # self.lineR = pg.LinearRegionItem(values=(1,1))
 
     def initGraph(self):
         # pg.setConfigOption('background','w')
@@ -38,16 +37,19 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
             self.legendtext.removeItem('S11')
             self.legendtext.removeItem('S22')
             self.legendtext.removeItem('S21')
-            self.plotgraph.showGrid(x=True,y=True)
-            self.plotgraph.setLabel(axis='left',text='S/dB')
-            self.plotgraph.setLabel(axis='bottom',text='Freq/MHz')
-            self.plotgraph.plot(self._freq/1000000.0,self._mag_s11,pen=(242,242,0),name="S11")
-            self.plotgraph.plot(self._freq/1000000.0,self._mag_s22,pen=(236,5,236),name="S22")           
-            self.plotgraph.plot(self._freq/1000000.0,self._mag_s21,pen=(3,245,245),name="S21")
+            self.plotgraph.showGrid(x=True, y=True)
+            self.plotgraph.setLabel(axis='left', text='dB')
+            self.plotgraph.setLabel(axis='bottom', text='Freq/MHz')
+            self.plotgraph.plot(self._freq/1000000.0,
+                                self._mag_s11, pen=(242, 242, 0), name="S11")
+            self.plotgraph.plot(self._freq/1000000.0,
+                                self._mag_s22, pen=(236, 5, 236), name="S22")
+            self.plotgraph.plot(self._freq/1000000.0,
+                                self._mag_s21, pen=(3, 245, 245), name="S21")
 
             # self.lineR.setRegion([self._freq[0],self._freq[2]])
             # self.plotgraph.addItem(self.lineR)
-        
+
     def registerEvent(self):
         self.ImportButton.clicked.connect(self.import_click)
         self.ExportButton.clicked.connect(self.export_click)
@@ -72,11 +74,49 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
         self.ApplyButton.clicked.connect(self.apply_click)
         self.HelpButton.clicked.connect(self.help_click)
 
+        self.IdentityButton.toggled.connect(self.InitIdentity)
+        self.PartialButton.toggled.connect(self.InitPartial)
+
+        self.RowAddButton.clicked.connect(self.AddRow)
+        self.RowDeleteButton.clicked.connect(self.DeleteRow)
+        self.ColumnAddButton.clicked.connect(self.AddColumn)
+        self.ColumnDeleteButton.clicked.connect(self.DeleteColumn)
+        self.ParameterApplyButton.clicked.connect(self.ParameterApply_click)
+
+    def InitIdentity(self):
+        pass
+
+    def InitPartial(self):
+        pass
+
+    def AddRow(self):
+        rowcount = self.Parameter_Table.rowCount()
+        self.Parameter_Table.insertRow(rowcount)
+
+    def DeleteRow(self):
+        index = self.Parameter_Table.currentRow()
+        if index != -1:
+            self.Parameter_Table.removeRow(index)
+
+    def AddColumn(self):
+        columncount = self.Parameter_Table.columnCount()
+        self.Parameter_Table.insertColumn(columncount)
+        self.ParameterHeader.append('Xc '+ str(columncount))
+        self.Parameter_Table.setHorizontalHeaderLabels(self.ParameterHeader)
+
+    def DeleteColumn(self):
+        index = self.Parameter_Table.currentColumn()
+        if index != 0 or index!= -1:
+            self.Parameter_Table.removeColumn(index)
+
+    def ParameterApply_click(self):
+        pass
+
     def setData(self, file_name):
         self.DataNull = True
         self.load_file_name = file_name
         self.file_data = np.loadtxt(
-            file_name, dtype=float, comments=['!','#'])
+            file_name, dtype=float, comments=['!', '#'])
         self._freq = self.file_data[..., 0]
         self._mag_s11 = self.file_data[..., 1]
         self._ang_s11 = self.file_data[..., 2]
@@ -273,7 +313,7 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
 
     def help_click(self):
         self.helpbox = QMessageBox(
-            QMessageBox.Question, 'Help', 'All rights reserved @ Luoxiaotao')
+            QMessageBox.Question, 'Help', 'All rights reserved @ xiaotao.Luo')
         ruturnBtn = self.helpbox.addButton('返回', QMessageBox.YesRole)
         self.helpbox.show()
 
@@ -359,7 +399,7 @@ class LoadS2P(Ui_MainWindow, QMainWindow):
         if self.tabelNum == 3:
             self.deleteTableRow(self.Att_Table)
         if self.tabelNum == 4:
-            self.deleteTableRow(self.Ripple_Table)       
+            self.deleteTableRow(self.Ripple_Table)
 
     def maxiltabel_click(self):
         self.tabelNum = 1
